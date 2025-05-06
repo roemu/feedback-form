@@ -1,9 +1,6 @@
 package main
 
 import (
-	"encoding/json"
-	"log"
-	"os"
 	"strconv"
 
 	"github.com/charmbracelet/bubbles/textarea"
@@ -52,12 +49,8 @@ func (f Feedback) Update(msg tea.Msg) (tea.Model, tea.Cmd) {
 			f.QuestionIndex = Clamp(0, f.QuestionIndex+1, len(f.Questions))
 		case "enter":
 			if f.QuestionIndex >= len(f.Questions) {
-				out, err := json.Marshal(f)
-				if err != nil {
-					log.Fatal("Unable to marshal model")
-				}
 				
-				os.WriteFile("output.log", out, 0644) 
+				InsertFeedback(database, f)
 				return f, tea.Quit
 			}
 			fallthrough

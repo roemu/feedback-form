@@ -19,6 +19,8 @@
 		pkgs.curl
 		pkgs.gitMinimal
 		pkgs.neovim
+		pkgs.sqlite
+		pkgs.go
 	];
 
 	users.users.root = {

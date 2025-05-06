@@ -5,6 +5,7 @@ package main
 
 import (
 	"context"
+	"database/sql"
 	_ "embed"
 	"errors"
 	"net"
@@ -27,12 +28,17 @@ import (
 //go:embed questions.yaml
 var questions []byte
 
+var database *sql.DB
+
 const (
 	host = "0.0.0.0"
 	port = "23234"
 )
 
 func main() {
+
+	database = CreateDatabase()
+	defer database.Close()
 	
 	s, err := wish.NewServer(
 		wish.WithAddress(net.JoinHostPort(host, port)),
