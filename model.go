@@ -1,6 +1,9 @@
 package main
 
 import (
+	"encoding/json"
+	"log"
+	"os"
 	"strconv"
 
 	"github.com/charmbracelet/bubbles/textarea"
@@ -32,41 +35,45 @@ func (f Feedback) Init() tea.Cmd {
 }
 
 func (f Feedback) Update(msg tea.Msg) (tea.Model, tea.Cmd) {
-	cmds := []tea.Cmd{}
 	switch msg := msg.(type) {
 	case tea.WindowSizeMsg:
 		f.TermHeight = msg.Height
 		f.TermWidth = msg.Width
 	case tea.KeyMsg:
 		switch msg.String() {
-		case "enter":
-			if f.QuestionIndex >= len(f.Questions) {
-				// TODO: Save to file
-				return f, tea.Quit
-			}
 		case "ctrl+c":
 			return f, tea.Quit
 		case "ctrl+d":
 			f.DebugMode = !f.DebugMode
 			return f, nil
 		case "up", "shift+tab":
-			// TODO: factor out to below switch and upate with reassigning the model back into main model
 			f.QuestionIndex = Clamp(0, f.QuestionIndex-1, len(f.Questions))
-			if f.QuestionIndex > len(f.Questions) {
-				cmd := f.Questions[f.QuestionIndex].Answer.Focus()
-				cmds = append(cmds, cmd)
-			}
-			return f, nil
 		case "down", "tab":
 			f.QuestionIndex = Clamp(0, f.QuestionIndex+1, len(f.Questions))
-			if f.QuestionIndex > len(f.Questions) {
-				cmd := f.Questions[f.QuestionIndex].Answer.Focus()
-				cmds = append(cmds, cmd)
+		case "enter":
+			if f.QuestionIndex >= len(f.Questions) {
+				out, err := json.Marshal(f)
+				if err != nil {
+					log.Fatal("Unable to marshal model")
+				}
+				
+				os.WriteFile("output.log", out, 0644) 
+				return f, tea.Quit
 			}
-			return f, nil
+			fallthrough
+		default:
+			if -1 < f.QuestionIndex && f.QuestionIndex < len(f.Questions) {
+				updated, cmd := f.Questions[f.QuestionIndex].Answer.Update(msg)
+				f.Questions[f.QuestionIndex].Answer = updated
+				return f, cmd
+			}
 		}
 	}
-	return f, tea.Batch(cmds...)
+	if -1 < f.QuestionIndex && f.QuestionIndex < len(f.Questions) {
+		cmd := f.Questions[f.QuestionIndex].Answer.Focus()
+		return f, cmd
+	}
+	return f, nil
 }
 
 func (f Feedback) View() string {
