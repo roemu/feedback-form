@@ -20,6 +20,7 @@
 		pkgs.gitMinimal
 		pkgs.sqlite
 		pkgs.go
+		pkgs.gcc
 	];
 
 	programs.neovim = {
