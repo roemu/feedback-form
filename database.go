@@ -53,7 +53,7 @@ func InsertFeedback(db *sql.DB, f Feedback) {
 
 	InsertAnswers(db, f)
 
-	log.Infof("%s has submitted a new feedback!")
+	log.Infof("%s has submitted a new feedback!", f.Host)
 }
 
 func InsertAnswers(db *sql.DB, f Feedback) {

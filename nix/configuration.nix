@@ -22,6 +22,9 @@
 		pkgs.go
 		pkgs.gcc
 	];
+	environment.variables = {
+		CGO_ENABLED=1;
+	};
 
 	programs.neovim = {
 		enable = true;
