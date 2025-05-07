@@ -89,6 +89,8 @@ func teaHandler(s ssh.Session) (tea.Model, []tea.ProgramOption) {
 
 	questionConfig.Questions = Map(questionConfig.Questions, func(q Question) Question {
 		q.Answer = textarea.New()
+		q.Answer.SetWidth(50)
+		q.Answer.ShowLineNumbers = false;
 		return q
 	})
 

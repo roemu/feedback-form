@@ -18,10 +18,15 @@
 	environment.systemPackages = map lib.lowPrio [
 		pkgs.curl
 		pkgs.gitMinimal
-		pkgs.neovim
 		pkgs.sqlite
 		pkgs.go
 	];
+
+	programs.neovim = {
+		enable = true;
+		defaultEditor = true;
+		viAlias = true;
+	};
 
 	users.users.root = {
 		openssh.authorizedKeys.keys = [

@@ -95,7 +95,11 @@ func (f Feedback) View() string {
 	information := lipgloss.JoinVertical(
 		lipgloss.Center,
 		lipgloss.NewStyle().MarginBottom(2).Render(f.Questions[f.QuestionIndex].Title),
-		f.Questions[f.QuestionIndex].Answer.View(),
+		lipgloss.NewStyle().
+			Border(lipgloss.RoundedBorder(), true).
+			BorderForeground(lipgloss.Color("#FFFFFF")).
+			Render(
+				f.Questions[f.QuestionIndex].Answer.View()),
 	)
 	if f.DebugMode {
 		information = lipgloss.JoinVertical(
