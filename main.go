@@ -36,7 +36,6 @@ const (
 )
 
 func main() {
-
 	database = CreateDatabase()
 	defer database.Close()
 	
@@ -75,7 +74,7 @@ func main() {
 func teaHandler(s ssh.Session) (tea.Model, []tea.ProgramOption) {
 	pty, _, _ := s.Pty()
 
-	var questionConfig QuestionConfig
+	var questionConfig FeedbackConfig
 	err := yaml.Unmarshal(questions, &questionConfig)
 	if err != nil {
 		log.Fatal("Unable to Unmarshal questions yaml: ", "err", err)
@@ -90,17 +89,18 @@ func teaHandler(s ssh.Session) (tea.Model, []tea.ProgramOption) {
 	questionConfig.Questions = Map(questionConfig.Questions, func(q Question) Question {
 		q.Answer = textarea.New()
 		q.Answer.SetWidth(50)
+		q.Answer.SetHeight(10)
 		q.Answer.ShowLineNumbers = false;
 		return q
 	})
 
-	return Feedback{
+	f := Feedback{
 		pty.Window.Width,
 		pty.Window.Height,
 		s.User(),
 		questionConfig.Questions,
 		-1,
 		questionConfig,
-		false,
-	}, []tea.ProgramOption{tea.WithAltScreen()}
+	}
+	return f, []tea.ProgramOption{tea.WithAltScreen()}
 }
