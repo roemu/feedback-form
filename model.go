@@ -7,7 +7,8 @@ import (
 	"github.com/muesli/gamut"
 )
 
-var blends = gamut.Blends(lipgloss.Color("#F25D94"), lipgloss.Color("#EDFF82"), 35)
+var blends = gamut.Blends(lipgloss.Color("#F25D94"), lipgloss.Color("#EDFF82"), 90)
+var blendsShort = gamut.Blends(lipgloss.Color("#F25D94"), lipgloss.Color("#EDFF82"), 35)
 
 type Feedback struct {
 	TermHeight     int
@@ -19,7 +20,6 @@ type Feedback struct {
 }
 
 type Question struct {
-	ID     int    `json:"id"` // to identify in output file
 	Title  string `json:"title"`
 	Answer textarea.Model
 }
@@ -86,14 +86,15 @@ func (f Feedback) View() string {
 
 func (q Question) View() string {
 	return lipgloss.JoinVertical(
-			lipgloss.Center,
-			lipgloss.NewStyle().MarginBottom(2).Render(Rainbow(q.Title, blends)),
-			lipgloss.NewStyle().
-				Border(lipgloss.RoundedBorder(), true).
-				BorderForeground(lipgloss.Color("#AAAAAA")).
-				MarginBottom(2).
-				Render(q.Answer.View()))
+		lipgloss.Center,
+		lipgloss.NewStyle().MarginBottom(2).Render(Rainbow(q.Title, blends)),
+		lipgloss.NewStyle().
+			Border(lipgloss.RoundedBorder(), true).
+			BorderForeground(lipgloss.Color("#AAAAAA")).
+			MarginBottom(2).
+			Render(q.Answer.View()))
 }
+
 func Welcome(f Feedback) string {
 	return lipgloss.Place(
 		f.TermWidth,
@@ -102,9 +103,10 @@ func Welcome(f Feedback) string {
 		lipgloss.Center,
 		lipgloss.JoinVertical(
 			lipgloss.Center,
-			Rainbow(f.FeedbackConfig.WelcomeText, blends),
-			lipgloss.NewStyle().Foreground(lipgloss.Color("#AAAAAA")).MarginTop(2).Italic(true).Render("<Press tab/shift+tab>")))
+			Rainbow(f.FeedbackConfig.WelcomeText, blendsShort),
+			lipgloss.NewStyle().Foreground(lipgloss.Color("#AAAAAA")).MarginTop(2).Italic(true).Render("press <tab>/<shift+tab>")))
 }
+
 func Goodbye(f Feedback) string {
 	return lipgloss.Place(
 		f.TermWidth,
@@ -114,8 +116,8 @@ func Goodbye(f Feedback) string {
 		lipgloss.JoinVertical(
 			lipgloss.Center,
 			Button(),
-			lipgloss.NewStyle().Foreground(lipgloss.Color("#AAAAAA")).Margin(2,2).Italic(true).Render("<press enter>"),
-			Rainbow(f.FeedbackConfig.GoodbyeText, blends)))
+			lipgloss.NewStyle().Foreground(lipgloss.Color("#AAAAAA")).Margin(2, 2).Italic(true).Render("press <enter> to send or <shift+tab> to go back"),
+			Rainbow(f.FeedbackConfig.GoodbyeText, blendsShort)))
 }
 
 func Button() string {
@@ -124,5 +126,5 @@ func Button() string {
 		Border(lipgloss.RoundedBorder(), true).
 		BorderForeground(lipgloss.Color("#AAAAAA"))
 
-	return border.Render(Rainbow("Send feedback", blends))
+	return border.Render(Rainbow("Send feedback", blendsShort))
 }
