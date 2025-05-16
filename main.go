@@ -8,12 +8,12 @@ import (
 	"database/sql"
 	_ "embed"
 	"errors"
+	"flag"
 	"net"
 	"os"
 	"os/signal"
 	"syscall"
 	"time"
-	"flag"
 
 	"github.com/charmbracelet/bubbles/textarea"
 	tea "github.com/charmbracelet/bubbletea"
@@ -23,6 +23,7 @@ import (
 	"github.com/charmbracelet/wish/activeterm"
 	"github.com/charmbracelet/wish/bubbletea"
 	"github.com/charmbracelet/wish/logging"
+	"github.com/muesli/termenv"
 	"gopkg.in/yaml.v3"
 )
 
@@ -45,12 +46,12 @@ func main() {
 
 	database = CreateDatabase(databasePath)
 	defer database.Close()
-	
+
 	s, err := wish.NewServer(
 		wish.WithAddress(net.JoinHostPort(host, port)),
 		wish.WithHostKeyPath(".ssh/id_ed25519"),
 		wish.WithMiddleware(
-			bubbletea.Middleware(teaHandler),
+			bubbletea.MiddlewareWithColorProfile(teaHandler, termenv.TrueColor),
 			activeterm.Middleware(), // Bubble Tea apps usually require a PTY.
 			logging.Middleware(),
 		),
@@ -97,7 +98,7 @@ func teaHandler(s ssh.Session) (tea.Model, []tea.ProgramOption) {
 		q.Answer = textarea.New()
 		q.Answer.SetWidth(50)
 		q.Answer.SetHeight(10)
-		q.Answer.ShowLineNumbers = false;
+		q.Answer.ShowLineNumbers = false
 		return q
 	})
 
