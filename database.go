@@ -7,8 +7,8 @@ import (
 	_ "github.com/mattn/go-sqlite3"
 )
 
-func CreateDatabase() *sql.DB {
-	db, err := sql.Open("sqlite3", "feedbacks.db")
+func CreateDatabase(path string) *sql.DB {
+	db, err := sql.Open("sqlite3", path)
 	if err != nil {
 		log.Fatal("Unable to open/create database", "err", err)
 	}

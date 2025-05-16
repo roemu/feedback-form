@@ -13,6 +13,7 @@ import (
 	"os/signal"
 	"syscall"
 	"time"
+	"flag"
 
 	"github.com/charmbracelet/bubbles/textarea"
 	tea "github.com/charmbracelet/bubbletea"
@@ -32,11 +33,17 @@ var database *sql.DB
 
 const (
 	host = "0.0.0.0"
-	port = "23234"
 )
 
+var databasePath string
+var port string
+
 func main() {
-	database = CreateDatabase()
+	flag.StringVar(&port, "port", "23234", "port used to run ssh app")
+	flag.StringVar(&databasePath, "db-path", "feedbacks.db", "path to database, defaults to feedbacks.db in the same directory where app is ran")
+	flag.Parse()
+
+	database = CreateDatabase(databasePath)
 	defer database.Close()
 	
 	s, err := wish.NewServer(
