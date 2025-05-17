@@ -23,6 +23,7 @@ import (
 	"github.com/charmbracelet/wish/activeterm"
 	"github.com/charmbracelet/wish/bubbletea"
 	"github.com/charmbracelet/wish/logging"
+	"github.com/muesli/termenv"
 	"gopkg.in/yaml.v3"
 )
 
@@ -50,7 +51,7 @@ func main() {
 		wish.WithAddress(net.JoinHostPort(host, port)),
 		wish.WithHostKeyPath(".ssh/id_ed25519"),
 		wish.WithMiddleware(
-			bubbletea.Middleware(teaHandler),
+			bubbletea.MiddlewareWithColorProfile(teaHandler, termenv.TrueColor),
 			activeterm.Middleware(), // Bubble Tea apps usually require a PTY.
 			logging.Middleware(),
 		),
@@ -101,11 +102,9 @@ func teaHandler(s ssh.Session) (tea.Model, []tea.ProgramOption) {
 		return q
 	})
 
-	renderer := bubbletea.MakeRenderer(s)
 	f := Feedback{
 		pty.Window.Width,
 		pty.Window.Height,
-		renderer,
 		s.User(),
 		questionConfig.Questions,
 		-1,

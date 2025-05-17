@@ -13,7 +13,6 @@ var blendsShort = gamut.Blends(lipgloss.Color("#F25D94"), lipgloss.Color("#EDFF8
 type Feedback struct {
 	TermHeight     int
 	TermWidth      int
-	Renderer       *lipgloss.Renderer
 	Host           string
 	Questions      []Question
 	QuestionIndex  int
@@ -77,19 +76,19 @@ func (f Feedback) View() string {
 	if f.QuestionIndex >= len(f.Questions) {
 		return Goodbye(f)
 	}
-	return f.Renderer.Place(
+	return lipgloss.Place(
 		f.TermWidth,
 		f.TermHeight,
 		lipgloss.Center,
 		lipgloss.Center,
-		f.Questions[f.QuestionIndex].View(f.Renderer))
+		f.Questions[f.QuestionIndex].View())
 }
 
-func (q Question) View(renderer *lipgloss.Renderer) string {
+func (q Question) View() string {
 	return lipgloss.JoinVertical(
 		lipgloss.Center,
-		renderer.NewStyle().MarginBottom(2).Render(Rainbow(renderer, q.Title, blends)),
-		renderer.NewStyle().
+		lipgloss.NewStyle().MarginBottom(2).Render(Rainbow(q.Title, blends)),
+		lipgloss.NewStyle().
 			Border(lipgloss.RoundedBorder(), true).
 			BorderForeground(lipgloss.Color("#AAAAAA")).
 			MarginBottom(2).
@@ -104,8 +103,8 @@ func Welcome(f Feedback) string {
 		lipgloss.Center,
 		lipgloss.JoinVertical(
 			lipgloss.Center,
-			Rainbow(f.Renderer, f.FeedbackConfig.WelcomeText, blendsShort),
-			f.Renderer.NewStyle().Foreground(lipgloss.Color("#AAAAAA")).MarginTop(2).Italic(true).Render("press <tab>/<shift+tab>")))
+			Rainbow(f.FeedbackConfig.WelcomeText, blendsShort),
+			lipgloss.NewStyle().Foreground(lipgloss.Color("#AAAAAA")).MarginTop(2).Italic(true).Render("press <tab>/<shift+tab>")))
 }
 
 func Goodbye(f Feedback) string {
@@ -116,16 +115,16 @@ func Goodbye(f Feedback) string {
 		lipgloss.Center,
 		lipgloss.JoinVertical(
 			lipgloss.Center,
-			Button(f.Renderer),
-			f.Renderer.NewStyle().Foreground(lipgloss.Color("#AAAAAA")).Margin(2, 2).Italic(true).Render("press <enter> to send or <shift+tab> to go back"),
-			Rainbow(f.Renderer, f.FeedbackConfig.GoodbyeText, blendsShort)))
+			Button(),
+			lipgloss.NewStyle().Foreground(lipgloss.Color("#AAAAAA")).Margin(2, 2).Italic(true).Render("press <enter> to send or <shift+tab> to go back"),
+			Rainbow(f.FeedbackConfig.GoodbyeText, blendsShort)))
 }
 
-func Button(renderer *lipgloss.Renderer) string {
-	border := renderer.NewStyle().
+func Button() string {
+	border := lipgloss.NewStyle().
 		Padding(1, 4).
 		Border(lipgloss.RoundedBorder(), true).
 		BorderForeground(lipgloss.Color("#AAAAAA"))
 
-	return border.Render(Rainbow(renderer, "Send feedback", blendsShort))
+	return border.Render(Rainbow("Send feedback", blendsShort))
 }
