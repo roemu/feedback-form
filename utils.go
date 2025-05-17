@@ -15,11 +15,11 @@ func Map[T any,K any] (arr []T, f func(T) K) []K {
 	return out
 }
 
-func Rainbow(s string, colors []color.Color) string {
+func Rainbow(renderer *lipgloss.Renderer, s string, colors []color.Color) string {
 	var str string
 	for i, ss := range s {
 		color, _ := colorful.MakeColor(colors[i%len(colors)])
-		str = str + lipgloss.NewStyle().Foreground(lipgloss.Color(color.Hex())).Render(string(ss))
+		str = str + renderer.NewStyle().Foreground(lipgloss.Color(color.Hex())).Render(string(ss))
 	}
 	return str
 }
