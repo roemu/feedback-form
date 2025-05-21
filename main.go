@@ -17,6 +17,7 @@ import (
 
 	"github.com/charmbracelet/bubbles/textarea"
 	tea "github.com/charmbracelet/bubbletea"
+	"github.com/charmbracelet/lipgloss"
 	"github.com/charmbracelet/log"
 	"github.com/charmbracelet/ssh"
 	"github.com/charmbracelet/wish"
@@ -101,7 +102,6 @@ func teaHandler(s ssh.Session) (tea.Model, []tea.ProgramOption) {
 		q.Answer.ShowLineNumbers = false
 		return q
 	})
-
 	f := Feedback{
 		pty.Window.Width,
 		pty.Window.Height,
@@ -110,5 +110,6 @@ func teaHandler(s ssh.Session) (tea.Model, []tea.ProgramOption) {
 		-1,
 		questionConfig,
 	}
+	lipgloss.SetColorProfile(termenv.TrueColor)
 	return f, []tea.ProgramOption{tea.WithAltScreen()}
 }
